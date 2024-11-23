@@ -13,6 +13,6 @@ Click on it and a WinUI3 `ContentDialog` is shown:
 
 ![Screenshot 2024-11-23 152547](https://github.com/user-attachments/assets/08ec8aae-368a-4e8a-b5be-918a9edafa53)
 
-Note there's a way to keep Win32 style (XAML style not initialized) like this:)
+Note there's a way to keep Win32 style (XAML style not initialized) like this:
 
 ![Screenshot 2024-11-23 152608](https://github.com/user-attachments/assets/d63fffa6-6b56-40a0-beb1-220a19c1f4b5)
