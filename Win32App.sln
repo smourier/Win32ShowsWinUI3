@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35514.174
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Win32App", "Win32App\Win32App.vcxproj", "{C311F8D8-3EE2-40ED-AB82-DEFCC4C5C167}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AFADF1D5-4101-418F-B9AB-2C92324BC89C} = {AFADF1D5-4101-418F-B9AB-2C92324BC89C}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinUI3ClassLibrary", "WinUI3ClassLibrary\WinUI3ClassLibrary.csproj", "{AFADF1D5-4101-418F-B9AB-2C92324BC89C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C311F8D8-3EE2-40ED-AB82-DEFCC4C5C167}.Debug|x64.ActiveCfg = Debug|x64
+		{C311F8D8-3EE2-40ED-AB82-DEFCC4C5C167}.Debug|x64.Build.0 = Debug|x64
+		{C311F8D8-3EE2-40ED-AB82-DEFCC4C5C167}.Release|x64.ActiveCfg = Release|x64
+		{C311F8D8-3EE2-40ED-AB82-DEFCC4C5C167}.Release|x64.Build.0 = Release|x64
+		{AFADF1D5-4101-418F-B9AB-2C92324BC89C}.Debug|x64.ActiveCfg = Debug|x64
+		{AFADF1D5-4101-418F-B9AB-2C92324BC89C}.Debug|x64.Build.0 = Debug|x64
+		{AFADF1D5-4101-418F-B9AB-2C92324BC89C}.Release|x64.ActiveCfg = Release|x64
+		{AFADF1D5-4101-418F-B9AB-2C92324BC89C}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
