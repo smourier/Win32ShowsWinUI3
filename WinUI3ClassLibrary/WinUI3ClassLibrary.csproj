@@ -10,7 +10,6 @@
 		<EnableDynamicLoading>true</EnableDynamicLoading>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<OutputPath>..\x64\$(Configuration)</OutputPath>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="SampleWindow.xaml" />
