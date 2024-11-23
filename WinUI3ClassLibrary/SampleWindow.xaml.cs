@@ -14,7 +14,7 @@ using Microsoft.Windows.ApplicationModel.DynamicDependency;
 
 namespace WinUI3ClassLibrary
 {
-    public sealed partial class SampleWindow : Window
+    public partial class SampleWindow : Window
     {
         public SampleWindow()
         {

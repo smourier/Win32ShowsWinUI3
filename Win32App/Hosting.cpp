@@ -10,7 +10,7 @@ hostfxr_run_app_fn run_app_fptr = nullptr;
 hostfxr_close_fn close_fptr = nullptr;
 component_entry_point_fn _showWindowFn = nullptr;
 
-bool load_hostfxr()
+static bool load_hostfxr()
 {
 	char_t buffer[2048];
 	auto buffer_size = sizeof(buffer) / sizeof(char_t);
@@ -29,7 +29,7 @@ bool load_hostfxr()
 	return (init_for_config_fptr && get_delegate_fptr && close_fptr);
 }
 
-load_assembly_and_get_function_pointer_fn get_dotnet_load_assembly(const char_t* config_path)
+static load_assembly_and_get_function_pointer_fn get_dotnet_load_assembly(const char_t* config_path)
 {
 	void* load_assembly_and_get_function_pointer = nullptr;
 	hostfxr_handle cxt = nullptr;
