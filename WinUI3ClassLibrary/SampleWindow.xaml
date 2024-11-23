@@ -1,15 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Window
     x:Class="WinUI3ClassLibrary.SampleWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:WinUI3ClassLibrary"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:WinUI3ClassLibrary"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Title="SampleWindow">
+    Title="Hello from WinUI3"
+    mc:Ignorable="d">
 
-    <Grid>
+    <StackPanel
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        Orientation="Horizontal">
+        <Button Click="OnOkButtonClick">OK</Button>
+        <Button Click="OnCancelButtonClick">Cancel</Button>
+    </StackPanel>
 
-    </Grid>
 </Window>

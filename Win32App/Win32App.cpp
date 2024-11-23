@@ -18,42 +18,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	winrt::init_apartment(winrt::apartment_type::single_threaded);
-
 	LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
 	LoadStringW(hInstance, IDC_WIN32APP, szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
 
 	if (!InitInstance(hInstance, nCmdShow))
 		return FALSE;
-
-	auto loaded = load_hostfxr();
-	if (!loaded)
-	{
-		MessageBox(nullptr, L"Error: cannot load .NET Core.", L"Win32ShowsWinUI3", 0);
-		return 0;
-	}
-
-	auto filePath = wil::GetModuleFileNameW();
-	PathCchRemoveFileSpec(filePath.get(), lstrlen(filePath.get()));
-
-	wil::unique_cotaskmem_string rtPath;
-	PathAllocCombine(filePath.get(), L"WinUI3ClassLibrary.runtimeconfig.json", 0, &rtPath);
-
-	wil::unique_cotaskmem_string dllPath;
-	PathAllocCombine(filePath.get(), L"WinUI3ClassLibrary.dll", 0, &dllPath);
-
-	auto load_assembly_and_get_function_pointer = get_dotnet_load_assembly(rtPath.get());
-	component_entry_point_fn hello = nullptr;
-	auto hr = load_assembly_and_get_function_pointer(
-		dllPath.get(),
-		L"WinUI3ClassLibrary.SampleWindow, WinUI3ClassLibrary",
-		L"Hello",
-		nullptr,
-		nullptr,
-		(void**)&hello);
-
-	auto result = hello((void*)12345678, sizeof(void*));
 
 	auto hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_WIN32APP));
 
@@ -129,6 +99,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		HDC hdc = BeginPaint(hWnd, &ps);
 		// TODO: Add any drawing code that uses hdc here...
 		EndPaint(hWnd, &ps);
+	}
+	break;
+
+	case WM_KEYDOWN:
+	{
+		ShowWinUI3Window(hWnd);
 	}
 	break;
 
