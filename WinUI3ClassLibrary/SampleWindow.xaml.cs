@@ -2,14 +2,15 @@ using System;
 using System.CodeDom.Compiler;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using Microsoft.UI.Windowing;
+using Microsoft.UI;
+using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Hosting;
 using Microsoft.UI.Xaml.Markup;
+using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.XamlTypeInfo;
 using Microsoft.Windows.ApplicationModel.DynamicDependency;
-using Windows.Graphics;
 
 namespace WinUI3ClassLibrary
 {
@@ -20,61 +21,65 @@ namespace WinUI3ClassLibrary
             InitializeComponent();
         }
 
-        private int _dialogResult;
+        public int DialogResult { get; protected set; }
 
         private void OnCancelButtonClick(object sender, RoutedEventArgs e) => Close();
         private void OnOkButtonClick(object sender, RoutedEventArgs e)
         {
-            _dialogResult = 1;
+            DialogResult = 1;
             Close();
         }
 
-        static DummyApp? _app;
+        private static DummyApp? _app;
+
+        // this is called by the Win32 app (see hosting.cpp)
         public static int ShowWindow(nint args, int sizeBytes)
         {
             // ask for WinAppSDK 1.6
             if (!Bootstrap.TryInitialize(0x00010006, string.Empty, new PackageVersion(), Bootstrap.InitializeOptions.OnNoMatch_ShowUI, out var hr))
                 return hr;
 
-            var dialogResult = 0;
-
-            // init an app to get XAML support
-            //_app ??= new DummyApp();
-            _ = new DummyApp();
-            Application.Start(p =>
+            if (_app == null)
             {
-                // trick to simulate "modality" of our window
-                EnableWindow(args, false);
+                // comment this line if you don't want WinUI3 styles
+                _app = new DummyApp();
+                DispatcherQueueController.CreateOnCurrentThread();
+            }
 
-                var window = new SampleWindow();
-                window.Activate();
+            var _source = new DesktopWindowXamlSource();
+            _source.Initialize(Win32Interop.GetWindowIdFromWindow(args));
 
-                // resize & center
-                var size = 500;
-                window.AppWindow.Resize(new SizeInt32(size, size));
-                var displayArea = DisplayArea.GetFromWindowId(window.AppWindow.Id, DisplayAreaFallback.Nearest);
-                window.AppWindow.Move(new PointInt32((displayArea.WorkArea.Width - size) / 2, (displayArea.WorkArea.Height - size) / 2));
+            var button = new Button()
+            {
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Content = "Click me!",
+            };
 
-                dialogResult = window._dialogResult;
-            });
+            var grid = new Grid() { Background = new SolidColorBrush(Colors.LightBlue) };
+            grid.Children.Add(button);
 
-            EnableWindow(args, true);
-            SetActiveWindow(args);
-            return dialogResult;
+            button.Click += async (s, e) =>
+            {
+                var contentDialog = new ContentDialog()
+                {
+                    XamlRoot = grid.XamlRoot,
+                    Title = "Information",
+                    Content = "Hello from WinUI 3!",
+                    CloseButtonText = "OK"
+                };
+                await contentDialog.ShowAsync();
+                _source.Dispose();
+            };
+
+            _source.Content = grid;
+            return 0;
         }
-
-        [DllImport("user32")]
-        private static extern bool EnableWindow(nint hWnd, bool bEnable);
-
-        [DllImport("user32")]
-        private static extern bool SetActiveWindow(nint hWnd);
 
         // this is needed for proper XAML support
         private sealed class DummyApp : Application, IXamlMetadataProvider
         {
             private readonly XamlControlsXamlMetaDataProvider provider = new();
             private readonly IXamlMetadataProvider _myLibProvider;
-            private static bool _xamlLoaded;
 
             public DummyApp()
             {
@@ -106,12 +111,8 @@ namespace WinUI3ClassLibrary
 
             protected override void OnLaunched(LaunchActivatedEventArgs args)
             {
-                if (!_xamlLoaded)
-                {
-                    Resources.MergedDictionaries.Add(new XamlControlsResources());
-                    _xamlLoaded = true;
-                    base.OnLaunched(args);
-                }
+                Resources.MergedDictionaries.Add(new XamlControlsResources());
+                base.OnLaunched(args);
             }
         }
     }
