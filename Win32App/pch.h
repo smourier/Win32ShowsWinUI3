@@ -12,14 +12,6 @@
 #include "hosting\hostfxr.h"
 
 // WIL, requires "Microsoft.Windows.ImplementationLibrary" nuget
-#include "wil/result.h"
-#include "wil/stl.h"
 #include "wil/win32_helpers.h"
-#include "wil/com.h"
 
-// C++/WinRT, requires "Microsoft.Windows.CppWinRT" nuget
-#include "winrt/base.h"
-#include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.Foundation.Collections.h>
-#include <winrt/Windows.ApplicationModel.h>
-#include <winrt/Windows.Management.Deployment.h>
+#pragma comment(lib, "pathcch.lib")
