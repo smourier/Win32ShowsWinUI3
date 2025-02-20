@@ -33,7 +33,9 @@ namespace WinUI3ClassLibrary
         private static DummyApp? _app;
 
         // this is called by the Win32 app (see hosting.cpp)
+#pragma warning disable IDE0060 // Remove unused parameter
         public static int ShowWindow(nint args, int sizeBytes)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
             // ask for WinAppSDK 1.6
             if (!Bootstrap.TryInitialize(0x00010006, string.Empty, new PackageVersion(), Bootstrap.InitializeOptions.OnNoMatch_ShowUI, out var hr))
@@ -76,7 +78,7 @@ namespace WinUI3ClassLibrary
         }
 
         // this is needed for proper XAML support
-        private sealed class DummyApp : Application, IXamlMetadataProvider
+        private sealed partial class DummyApp : Application, IXamlMetadataProvider
         {
             private readonly XamlControlsXamlMetaDataProvider provider = new();
             private readonly IXamlMetadataProvider _myLibProvider;
