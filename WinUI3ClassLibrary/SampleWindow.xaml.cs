@@ -58,7 +58,7 @@ namespace WinUI3ClassLibrary
                 Content = "Click me!",
             };
 
-            var grid = new Grid() { Background = new SolidColorBrush(Colors.Transparent) };
+            var grid = new Grid() { Background = new SolidColorBrush(Colors.LightBlue) };
             grid.Children.Add(button);
 
             button.Click += async (s, e) =>
