@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Win32App": {
+      "commandName": "Executable",
+      "executablePath": "..\\x64\\Debug\\Win32App.exe",
+      "workingDirectory": "..\\x64"
+    }
+  }
+}
