@@ -1,7 +1,10 @@
 using System;
 using System.CodeDom.Compiler;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text;
 using Microsoft.UI;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml;
@@ -11,6 +14,7 @@ using Microsoft.UI.Xaml.Markup;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.XamlTypeInfo;
 using Microsoft.Windows.ApplicationModel.DynamicDependency;
+using Microsoft.Windows.ApplicationModel.Resources;
 
 namespace WinUI3ClassLibrary
 {
@@ -38,10 +42,8 @@ namespace WinUI3ClassLibrary
 #pragma warning restore IDE0060 // Remove unused parameter
         {
             // ask for WinAppSDK 1.8, 1.7 or 1.6
-
-            // uncomment the first line if you want to try 1.8 and cause crash
-            if (//!Bootstrap.TryInitialize(0x00010008, string.Empty, new PackageVersion(), Bootstrap.InitializeOptions.None, out var hr) &&
-                !Bootstrap.TryInitialize(0x00010007, string.Empty, new PackageVersion(), Bootstrap.InitializeOptions.None, out var hr) &&
+            if (!Bootstrap.TryInitialize(0x00010008, string.Empty, new PackageVersion(), Bootstrap.InitializeOptions.None, out var hr) &&
+                !Bootstrap.TryInitialize(0x00010007, string.Empty, new PackageVersion(), Bootstrap.InitializeOptions.None, out hr) &&
                 !Bootstrap.TryInitialize(0x00010006, string.Empty, new PackageVersion(), Bootstrap.InitializeOptions.OnNoMatch_ShowUI, out hr))
                 return hr;
 
@@ -84,7 +86,7 @@ namespace WinUI3ClassLibrary
         // this is needed for proper XAML support
         private sealed partial class DummyApp : Application, IXamlMetadataProvider
         {
-            private readonly XamlControlsXamlMetaDataProvider provider = new();
+            private readonly XamlControlsXamlMetaDataProvider _provider = new();
             private readonly IXamlMetadataProvider _myLibProvider;
 
             public DummyApp()
@@ -92,25 +94,35 @@ namespace WinUI3ClassLibrary
                 // find the generated IXamlMetadataProvider for this lib
                 var type = GetType().Assembly.GetTypes().First(t => typeof(IXamlMetadataProvider).IsAssignableFrom(t) && t.GetCustomAttribute<GeneratedCodeAttribute>() != null);
                 _myLibProvider = (IXamlMetadataProvider)Activator.CreateInstance(type)!;
+
+                ResourceManagerRequested += (s, e) =>
+                {
+                    // this is required at least with first version of WinAppSDK 1.8
+                    var module = GetModuleHandleW("MRM");
+                    var sb = new StringBuilder(1024);
+                    _ = GetModuleFileNameW(module, sb, sb.Capacity);
+                    var resources = Path.Combine(Path.GetDirectoryName(sb.ToString())!, "resources.pri");
+                    e.CustomResourceManager = new ResourceManager(resources);
+                };
             }
 
             public IXamlType GetXamlType(Type type)
             {
-                var ret = provider.GetXamlType(type);
+                var ret = _provider.GetXamlType(type);
                 ret ??= _myLibProvider.GetXamlType(type);
                 return ret;
             }
 
             public IXamlType GetXamlType(string fullName)
             {
-                var ret = provider.GetXamlType(fullName);
+                var ret = _provider.GetXamlType(fullName);
                 ret ??= _myLibProvider.GetXamlType(fullName);
                 return ret;
             }
 
             public XmlnsDefinition[] GetXmlnsDefinitions()
             {
-                var ret = provider.GetXmlnsDefinitions();
+                var ret = _provider.GetXmlnsDefinitions();
                 ret ??= _myLibProvider.GetXmlnsDefinitions();
                 return ret;
             }
@@ -120,6 +132,16 @@ namespace WinUI3ClassLibrary
                 Resources.MergedDictionaries.Add(new XamlControlsResources());
                 base.OnLaunched(args);
             }
+
+            [DllImport("kernel32", CharSet = CharSet.Unicode)]
+#pragma warning disable IDE0079 // Remove unnecessary suppression
+#pragma warning disable SYSLIB1054 // Use 'LibraryImportAttribute' instead of 'DllImportAttribute' to generate P/Invoke marshalling code at compile time
+            private static extern nint GetModuleHandleW(string lpModuleName);
+
+            [DllImport("kernel32", CharSet = CharSet.Unicode)]
+            private static extern int GetModuleFileNameW(nint hModule, StringBuilder lpFilename, int nSize);
+#pragma warning restore SYSLIB1054 // Use 'LibraryImportAttribute' instead of 'DllImportAttribute' to generate P/Invoke marshalling code at compile time
+#pragma warning restore IDE0079 // Remove unnecessary suppression
         }
     }
 }
