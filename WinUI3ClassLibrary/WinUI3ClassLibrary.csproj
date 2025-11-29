@@ -15,8 +15,8 @@
 		<None Remove="SampleWindow.xaml" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.6584" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.251003001" />
+		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.7175" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.251106002" />
 	</ItemGroup>
 	<ItemGroup>
 		<Page Update="SampleWindow.xaml">
