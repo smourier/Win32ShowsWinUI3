@@ -15,6 +15,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.XamlTypeInfo;
 using Microsoft.Windows.ApplicationModel.DynamicDependency;
 using Microsoft.Windows.ApplicationModel.Resources;
+using Microsoft.Windows.ApplicationModel.WindowsAppRuntime;
 
 namespace WinUI3ClassLibrary
 {
@@ -41,8 +42,9 @@ namespace WinUI3ClassLibrary
         public static int ShowWindow(nint args, int sizeBytes)
 #pragma warning restore IDE0060 // Remove unused parameter
         {
-            // ask for WinAppSDK 1.8, 1.7 or 1.6
-            if (!Bootstrap.TryInitialize(0x00010008, string.Empty, new PackageVersion(), Bootstrap.InitializeOptions.None, out var hr) &&
+            // ask for WinAppSDK 2.0, 1.8, 1.7 or 1.6
+            if (!Bootstrap.TryInitialize(0x00020000, string.Empty, new PackageVersion(), Bootstrap.InitializeOptions.None, out var hr) &&
+                !Bootstrap.TryInitialize(0x00010008, string.Empty, new PackageVersion(), Bootstrap.InitializeOptions.None, out hr) &&
                 !Bootstrap.TryInitialize(0x00010007, string.Empty, new PackageVersion(), Bootstrap.InitializeOptions.None, out hr) &&
                 !Bootstrap.TryInitialize(0x00010006, string.Empty, new PackageVersion(), Bootstrap.InitializeOptions.OnNoMatch_ShowUI, out hr))
                 return hr;
@@ -72,7 +74,7 @@ namespace WinUI3ClassLibrary
                 {
                     XamlRoot = grid.XamlRoot,
                     Title = "Information",
-                    Content = "Hello from WinUI 3!",
+                    Content = $"Hello from WinUI 3 Version {RuntimeInfo.AsString}!",
                     CloseButtonText = "OK"
                 };
                 await contentDialog.ShowAsync();
